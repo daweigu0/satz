@@ -68,13 +68,16 @@ public:
 	int getClauseCnt() {
 		return this->clause_cnt;
 	}
+
 	template<typename T>
 	void readClauses(T& f) {
 		//cout << "readClausesº¯Êý" << endl;
 		Vtoc& m = variableId_to_Clauses;
 		vector<clause>& clauses = f.clauses;
 		string buffer;
-		clauses.push_back(clause{});
+		clause temp;
+		temp.length = INT_MAX;
+		clauses.push_back(temp);
 		int idx = 0;
 		while (getline(this->ifs, buffer)) {
 //			cout << "buffer:" <<buffer << endl;
@@ -92,6 +95,7 @@ public:
 			}
 			if(c.variables.empty()) continue;
 			c.length = c.variables.size();
+			if(c.length<f.clauses[f.minimum_clause_idx].length) f.setMinimunClauseIdx(idx);
 			if (c.length == 1) {
 				f.unit_clauses.push_back(idx);
 			}

@@ -8,9 +8,10 @@ using namespace std;
 extern Vtoc variableId_to_Clauses;
 
 void testAdvancedDPLL1() {
-	string filename = "C:/Users/l1768/Desktop/sat/DPLLÅàÑµ/DPLLÅàÑµ/SAT²âÊÔ±¸Ñ¡ËãÀı/Âú×ãËãÀı/S/problem2-50.cnf";
+	//C:/Users/l1768/Desktop/sat/DPLLÅàÑµ/DPLLÅàÑµ/SAT²âÊÔ±¸Ñ¡ËãÀı/²»Âú×ãËãÀı/u-problem10-100.cnf
+	string filename = "C:/Users/l1768/Desktop/sat/DPLLÅàÑµ/DPLLÅàÑµ/SAT²âÊÔ±¸Ñ¡ËãÀı/Beijing/2bitadd_11.cnf";
 	cout << filename << endl;  
-	Input input(filename);
+	Input input(filename); 
 	AdvancedFormula* f_ptr = new AdvancedFormula();
 	f_ptr->setCurrentClausesCnt(input.getClauseCnt());
 	f_ptr->setVariablesCnt(input.getBoolVarCnt()); 
@@ -24,7 +25,23 @@ void testAdvancedDPLL1() {
 	auto duration = chrono::duration_cast<chrono::milliseconds>(stop - start);
 	cout << "ºÄÊ±£º" << duration.count() / 1000.0 << "s" << endl;
 }
-
+void testAdvancedDPLLByConsole(string path) {
+	string filename = path;
+	//cout << filename << endl;
+	Input input(filename);
+	AdvancedFormula* f_ptr = new AdvancedFormula();
+	f_ptr->setCurrentClausesCnt(input.getClauseCnt());
+	f_ptr->setVariablesCnt(input.getBoolVarCnt());
+	variableId_to_Clauses.setVtocSize(input.getBoolVarCnt());
+	input.readClauses<AdvancedFormula>(*f_ptr);
+	f_ptr->initVariablesAssignAndFlipFlag(input.getBoolVarCnt());
+	auto start = chrono::high_resolution_clock::now();
+	int result = AdvancedDPLL::solverByIncrementalUpdate(*f_ptr);
+	auto stop = chrono::high_resolution_clock::now();
+	AdvancedDPLL::showResult(result);
+	auto duration = chrono::duration_cast<chrono::milliseconds>(stop - start);
+	cout << duration.count() / 1000.0 << endl;
+}
 void testAdvancedDPLL2(string filename) {
 	//string filename = "../instances/unsat-php-15-10.cnf";
 	cout << filename << endl;
@@ -43,7 +60,8 @@ void testAdvancedDPLL2(string filename) {
 	cout << duration.count() / 1000.0 << endl;
 }
 int main(int argc,char* argv[]) {
+	//testAdvancedDPLL1();
 	//test2(argv[1]);
-	testAdvancedDPLL1();
+	testAdvancedDPLLByConsole(argv[1]);
 	return 0;
 }

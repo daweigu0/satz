@@ -13,9 +13,7 @@ int Vtoc::find(int variable_id) {
 	return 0;
 }
 void Vtoc::insert(int variable_id, int clause_id) {
-	//cout << "insertº¯Êý" << " variable_id: " << variable_id << " clause_id: " << clause_id << endl;
 	variable_id = Vtoc::variableIdToIdx(variable_id);
-	//cout << "insertº¯Êý" << " variable_id: " << variable_id << " clause_id: " << clause_id << endl;
 	this->v[variable_id].push_back(clause_id);
 }
 vector<int>& Vtoc::operator[](int variable_id) {

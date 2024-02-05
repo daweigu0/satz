@@ -1,7 +1,8 @@
 #include"RecordChange.h"
-RecordChange::RecordChange(bool flag)
+RecordChange::RecordChange(int flag, int idx)
 {
-	this->up_or_moms_flag = flag;
+	this->flag = flag;
+	setPreMinimumClauseIdx(idx);
 }
 
 RecordChange::~RecordChange()

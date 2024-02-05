@@ -4,15 +4,24 @@ using namespace std;
 class RecordChange
 {
 public:
-	static const bool up_flag = false;
-	static const bool moms_flag = true;
-	bool up_or_moms_flag;//false代表up操作，true代表moms操作
+	enum{ 
+		up_flag = 0,
+		moms_flag = 1,
+		add_unit_clause_flag = 2,
+	};
+	//static const bool up_flag = false;
+	//static const bool moms_flag = true;
+	int flag;
+	int pre_minimum_clause_idx;
 	vector<int> assign_var_id;
 	vector<pair<int, int>> delete_variables;
 	vector<int> delete_clauses;
-	//vector<pair<int, int>> clauses_length;
 	vector<int> unit_clauses_insert;
 	vector<int> unit_clauses_remove;
-	RecordChange(bool flag);
+	RecordChange(int flag, int idx);
 	~RecordChange();
+
+	void setPreMinimumClauseIdx(int idx) {
+		this->pre_minimum_clause_idx = idx;
+	}
 };

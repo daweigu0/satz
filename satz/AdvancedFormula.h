@@ -1,5 +1,4 @@
 #pragma once
-#include<unordered_map>
 #include<vector>
 using namespace std;
 struct variable {
@@ -20,12 +19,16 @@ public:
 	vector<struct clause> clauses;
 	int current_clauses_cnt;
 	int variables_cnt;
+	int minimum_clause_idx = 0;
 	vector<int> unit_clauses;
 	AdvancedFormula() {};
 	AdvancedFormula(const AdvancedFormula& other);
 	~AdvancedFormula();
 	void setCurrentClausesCnt(int cnt);
 	void setVariablesCnt(int cnt);
+	void setMinimunClauseIdx(int idx);
 	void initVariablesAssignAndFlipFlag(int variables_cnt);
+	int findMinimunClauseIdx();
+	void updateMinimunClauseIdx(int change_length_clause_id, int current_length);
 	void printFormula();
 };
