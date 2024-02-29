@@ -6,7 +6,7 @@
 #include"AdvancedFormula.h"
 #include"vtoc.h"
 using namespace std;
-extern Vtoc variableId_to_Clauses;
+//extern Vtoc variableId_to_Clauses;
 class Input
 {
 private:
@@ -72,7 +72,7 @@ public:
 	template<typename T>
 	void readClauses(T& f) {
 		//cout << "readClausesº¯Êý" << endl;
-		Vtoc& m = variableId_to_Clauses;
+		Vtoc& m = f.variableId_to_Clauses;
 		vector<clause>& clauses = f.clauses;
 		string buffer;
 		clause temp;

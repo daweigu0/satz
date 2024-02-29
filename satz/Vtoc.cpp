@@ -4,6 +4,9 @@ using namespace std;
 Vtoc::Vtoc(int size) {
 	this->v.resize(size * 2 + 1);
 }
+Vtoc::Vtoc(const Vtoc& other) {
+	this->v = other.v;
+}
 void Vtoc::setVtocSize(int size) {
 	this->v.resize(size * 2 + 1);
 }
@@ -24,7 +27,7 @@ vector<int>& Vtoc::operator[](int variable_id) {
 	throw "索引下标有误！\n";
 }
 int Vtoc::size() {
-	return this->v.size();
+	return (int)this->v.size();
 }
 int Vtoc::idxToVariableId(int idx) {
 	if (idx % 2 == 0) return -(idx/2);

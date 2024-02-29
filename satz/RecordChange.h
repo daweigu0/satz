@@ -1,13 +1,15 @@
 ﻿#pragma once
 #include<vector>
+#include<iostream>
 using namespace std;
 class RecordChange
 {
 public:
-	enum{ 
+	enum {
 		up_flag = 0,
 		moms_flag = 1,
 		add_unit_clause_flag = 2,
+		add_unit_clause_in_H_flag = 3,
 	};
 	//static const bool up_flag = false;
 	//static const bool moms_flag = true;
