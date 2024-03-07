@@ -16,7 +16,7 @@ public:
 	int flag;
 	int pre_minimum_clause_idx;
 	vector<int> assign_var_id;
-	vector<pair<int, int>> delete_variables;
+	vector<pair<int, int>> delete_variables;//first: clause_id, second: variable_id
 	vector<int> delete_clauses;
 	vector<int> unit_clauses_insert;
 	vector<int> unit_clauses_remove;

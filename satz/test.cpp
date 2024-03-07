@@ -9,6 +9,7 @@ using namespace std;
 
 void testAdvancedDPLL1() {
 	//C:/Users/l1768/Desktop/sat/DPLL≈‡—µ/DPLL≈‡—µ/SAT≤‚ ‘±∏—°À„¿˝/≤ª¬˙◊„À„¿˝/u-problem10-100.cnf
+	//C:/Users/l1768/Desktop/sat/DPLL≈‡—µ/DPLL≈‡—µ/SAT≤‚ ‘±∏—°À„¿˝/Beijing/4blocks.cnf ewddr2-10-by-5-8.cnf
 	string filename = "C:/Users/l1768/Desktop/sat/DPLL≈‡—µ/DPLL≈‡—µ/SAT≤‚ ‘±∏—°À„¿˝/Beijing/4blocks.cnf";
 	cout << filename << endl;  
 	Input input(filename); 
@@ -29,12 +30,16 @@ void testAdvancedDPLL1() {
 	AdvancedDPLL::showResult(result);
 	auto duration = chrono::duration_cast<chrono::milliseconds>(stop - start);
 	cout << "TIME:" << duration.count() / 1000.0 << "s" << " ";
-	cout << "NB_SINGLE:" << f_ptr->NB_SINGLE << " " << 
-		"NB_BACK:" << f_ptr->NB_BACK << " " 
-		<< "NB_BRANCHE:" << f_ptr->NB_BRANCHE << " " 
-		<< "NB_UP:" << f_ptr->NB_UP << " " 
+	cout << "NB_SINGLE:" << f_ptr->NB_SINGLE << " "
+		<< "NB_BACK:" << f_ptr->NB_BACK << " "
+		<< "NB_BRANCHE:" << f_ptr->NB_BRANCHE << " "
+		<< "NB_UP:" << f_ptr->NB_UP << " "
 		<< "NB_UP_DETECT:" << f_ptr->NB_UP_DETECT << " "
-		<< "UP_DETECT_PERCENT:" << f_ptr->NB_UP_DETECT*1.0 / (f_ptr->NB_UP + f_ptr->NB_UP_DETECT) * 1.0 << endl;
+		<< endl
+		<< "UP_DETECT_PERCENT:" << f_ptr->NB_UP_DETECT*1.0 / (f_ptr->NB_UP + f_ptr->NB_UP_DETECT) * 1.0 << " "
+		<< "NB_SHUFFLE_FRONT:" << f_ptr->NB_SHUFFLE_FRONT << " "
+		<<"NB_SHUFFLE_ING:"<< f_ptr->NB_SHUFFLE_ING << " "
+		<< endl;
 	cout << endl;
 	AdvancedDPLL::verifyResult(verify_f);
 }
@@ -58,18 +63,22 @@ void testAdvancedDPLLByConsole(string filename) {
 	AdvancedDPLL::showResult(result);
 	auto duration = chrono::duration_cast<chrono::milliseconds>(stop - start);
 	cout << "TIME:" << duration.count() / 1000.0 << "s" << " ";
-	cout << "NB_SINGLE:" << f_ptr->NB_SINGLE << " " <<
-		"NB_BACK:" << f_ptr->NB_BACK << " "
+	cout << "NB_SINGLE:" << f_ptr->NB_SINGLE << " "
+		<< "NB_BACK:" << f_ptr->NB_BACK << " "
 		<< "NB_BRANCHE:" << f_ptr->NB_BRANCHE << " "
 		<< "NB_UP:" << f_ptr->NB_UP << " "
 		<< "NB_UP_DETECT:" << f_ptr->NB_UP_DETECT << " "
-		<< "UP_DETECT_PERCENT:" << f_ptr->NB_UP_DETECT * 1.0 / (f_ptr->NB_UP + f_ptr->NB_UP_DETECT) * 1.0 << endl;
+		<< endl
+		<< "UP_DETECT_PERCENT:" << f_ptr->NB_UP_DETECT * 1.0 / (f_ptr->NB_UP + f_ptr->NB_UP_DETECT) * 1.0 << " "
+		<< "NB_SHUFFLE_FRONT:" << f_ptr->NB_SHUFFLE_FRONT << " "
+		<< "NB_SHUFFLE_ING:" << f_ptr->NB_SHUFFLE_ING << " "
+		<< endl;
 	cout << endl;
 	AdvancedDPLL::verifyResult(verify_f);
 }
 
 int main(int argc,char* argv[]) {
-	testAdvancedDPLL1();
-	//testAdvancedDPLLByConsole(argv[1]);
+	//testAdvancedDPLL1();
+	testAdvancedDPLLByConsole(argv[1]);
 	return 0;
 }

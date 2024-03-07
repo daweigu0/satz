@@ -3,6 +3,13 @@
 #include"AdvancedFormula.h"
 #include"RecordChange.h"
 #include<stack>
+#include<queue>
+struct cmp
+{
+	bool operator()(pair<long long, int>& p1, pair<long long, int>& p2) {
+		return p1.first < p2.first;
+	}
+};
 class AdvancedDPLL
 {
 public:
@@ -17,11 +24,14 @@ public:
 	static void pureLiteralSimplify(AdvancedFormula& f);
 	static int up(AdvancedFormula& f, RecordChange& rc, int flag);
 	static int randomSelectVariableIdInVector(vector<int>& v);
+	static int selectVariableInPriorityQueue(priority_queue<pair<long long, int>, vector<pair<long long, int>>, cmp>& q);
 	static int momsSelectVariable(AdvancedFormula& f);
 	static int getMinimumClauseLength(AdvancedFormula& f);
 	static void recoveryForAdvancedH(AdvancedFormula& f, stack<RecordChange*>& st);
 	static vector<int>* minimumSentenceSet(AdvancedFormula& f);
 	static int H(AdvancedFormula& f, stack<RecordChange*>& st);
+	static int improveH(AdvancedFormula& f, stack<RecordChange*>& st);
+	static long long calculateWx(AdvancedFormula& f,const RecordChange& rc);
 	static void addUnitClause(AdvancedFormula& f, int var_id);
 	static void deleteUnitClause(AdvancedFormula& f, RecordChange& rc);
 	static void upBackTrackingHelpFun(AdvancedFormula& f, RecordChange& rc);

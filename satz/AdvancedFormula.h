@@ -28,6 +28,8 @@ public:
 	long long NB_BRANCHE = 0;
 	long long NB_UP = 0;
 	long long NB_UP_DETECT = 0;
+	long long NB_SHUFFLE_FRONT = 0;
+	long long NB_SHUFFLE_ING = 0;
 	vector<int> unit_clauses;
 	AdvancedFormula() {};
 	AdvancedFormula(const AdvancedFormula& other);

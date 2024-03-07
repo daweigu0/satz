@@ -5,8 +5,8 @@
 #include"RecordChange.h"
 #include<algorithm>
 #include <unordered_set>
-#include<queue>
 #include"AdvancedFormula.h"
+#include<map>
 //extern Vtoc variableId_to_Clauses;
 enum Result
 {
@@ -252,20 +252,6 @@ int AdvancedDPLL::up(AdvancedFormula& f,RecordChange& rc,int flag) {
 	return NORMAL;
 }
 
-int AdvancedDPLL::randomSelectVariableIdInVector(vector<int>& v) {
-	// 创建随机数引擎
-	random_device rd;
-	mt19937 gen(rd());
-
-	// 创建均匀分布函数
-	uniform_int_distribution<> dis(0, v.size() - 1);
-
-	// 随机选择一项
-	int randomIndex = dis(gen);
-	int var_id = v[randomIndex];
-	return var_id;
-}
-
 int AdvancedDPLL::momsSelectVariable(AdvancedFormula& f) {
 	int min_clause_length = INT_MAX;
 	for (auto it = (++f.clauses.begin()); it != f.clauses.end(); it++) {
@@ -342,10 +328,12 @@ void AdvancedDPLL::recoveryForAdvancedH(AdvancedFormula& f, stack<RecordChange*>
 	}
 }
 
-struct cmp
+
+
+struct cmp_map 
 {
-	bool operator()(pair<long long,int>& p1,pair<long long,int>& p2) {
-		return p1.first < p2.first;
+	bool operator()(const long long& n1, const long long& n2) const{
+		return n1 > n2;
 	}
 };
 
@@ -369,16 +357,63 @@ void reHashSet(unordered_set<int>*& s,vector<int>& v,int& source_f_min_clause_le
 		}
 	}
 }
-std::vector<int>& shuffleVector(std::vector<int>& vec) {
+void shuffleVector(std::vector<int>& vec, std::vector<int>::iterator leftIter, std::vector<int>::iterator rightIter) {
+	if(leftIter >= rightIter) return;
 	// 使用随机数引擎作为随机数生成器
 	std::random_device rd;
 	std::mt19937 rng(rd());
 
 	// 使用 std::shuffle 打乱 vector 中的元素
-	std::shuffle(vec.begin(), vec.end(), rng);
-
-	return vec;
+	std::shuffle(leftIter, rightIter, rng);
 }
+
+int AdvancedDPLL::randomSelectVariableIdInVector(vector<int>& v) {
+	// 创建随机数引擎
+	random_device rd;
+	mt19937 gen(rd());
+
+	// 创建均匀分布函数
+	uniform_int_distribution<> dis(0, v.size() - 1);
+
+	// 随机选择一项
+	int randomIndex = dis(gen);
+	int var_id = v[randomIndex];
+	return var_id;
+}
+
+int AdvancedDPLL::selectVariableInPriorityQueue(priority_queue<pair<long long, int>, vector<pair<long long, int>>, cmp>& q) {
+	long long pre_H_x;
+	if (!q.empty())
+		pre_H_x = q.top().first;
+	else
+		return NORMAL;
+	vector<int> vars;
+	while (!q.empty()) {
+		int var_id = q.top().second;
+		long long hx = q.top().first;
+		//&& isVariableNoDelete(f, var_id)
+		if (AdvancedFormula::variables_assign_ptr[var_id] == -1 && AdvancedFormula::flip_flag_ptr[var_id] == -1) {
+			if (pre_H_x == hx) {
+				vars.push_back(var_id);
+			}
+			else {
+				if (!vars.empty()) {
+					if (vars.size() == 1) return vars[0];
+					else {
+						return AdvancedDPLL::randomSelectVariableIdInVector(vars);
+					}
+				}
+				else {
+					pre_H_x = hx;
+					vars.push_back(var_id);
+				}
+			}
+		}
+		q.pop();
+	}
+	return NORMAL;
+}
+
 /**
  * @brief 根据satz的策略返回H(x)值最大的变元
  * @param f 
@@ -455,7 +490,8 @@ int AdvancedDPLL::H(AdvancedFormula& f, stack<RecordChange*>& st) {
 
 	int seselect_var_cnt = 0;
 	int up_cnt = 0;
-	shuffleVector(*variables);
+	if(f.NB_UP_DETECT%2==0)
+		shuffleVector(*variables,variables->begin(),variables->end());
 	for (auto& var : (*variables)) {
 		if (AdvancedFormula::getVariableAssignByVariableId(var) != -1) continue;
 		
@@ -574,6 +610,159 @@ int AdvancedDPLL::H(AdvancedFormula& f, stack<RecordChange*>& st) {
 		q.pop();
 	}
 	return NORMAL;
+}
+
+long long AdvancedDPLL::calculateWx(AdvancedFormula& f,const RecordChange& rc) {	
+	/*long long wx = 0;
+	for (auto& pair_it : rc.delete_variables) {
+		int clause_id = pair_it.first;
+		if (!f.isClauseDelete(clause_id) && AdvancedFormula::getCluaseLengthByClauseId(f,clause_id) == f.getMinimumClauseLength())
+			wx++;
+	}*
+	return wx;*/
+	return rc.delete_clauses.size() + rc.delete_variables.size();
+}
+/**
+ * @brief 根据satz的策略返回H(x)值最大的变元
+ * @param f
+ * @return 返回H(x)值最大的变元id
+*/
+int AdvancedDPLL::improveH(AdvancedFormula& f, stack<RecordChange*>& st) {
+	enum PROP { P41, P31, P } flag;
+	flag = P;
+	const int T = 10;
+	vector<int> free_variable;
+	for (int i = 1; i <= f.variables_cnt; i++) {
+		if (AdvancedFormula::variables_assign_ptr[i] == -1 && AdvancedFormula::flip_flag_ptr[i] == -1) {
+			free_variable.push_back(i);
+		}
+	}
+	vector<int> PROP41;
+	vector<int> PROP31;
+	for (auto& var : free_variable) {
+		int cnt = 0;//包含X或-X的二元子句的数量
+		int p_cnt = 0;//子句含有变元X的数量
+		int n_cnt = 0;//子句含有变元-X的数量
+		for (auto& clause_id : f.getClausesByVariableId(var)) {
+			if (!f.clauses[clause_id].flag) {
+				if (f.clauses[clause_id].length == 2) cnt++;
+				p_cnt++;
+			}
+		}
+		for (auto& clause_id : f.getClausesByVariableId(-var)) {
+			if (!f.clauses[clause_id].flag) {
+				if (f.clauses[clause_id].length == 2) cnt++;
+				n_cnt++;
+			}
+		}
+		if (cnt >= 4 && p_cnt >= 1 && n_cnt >= 1) PROP41.push_back(var);
+		if (cnt >= 3 && p_cnt >= 1 && n_cnt >= 1) PROP31.push_back(var);
+	}
+	if (PROP41.size() >= T)
+	{
+		flag = P41;
+	}
+	else
+	{
+		if (PROP31.size() >= T)
+			flag = P31;
+	}
+	vector<int>* variables = NULL;
+	switch (flag)
+	{
+	case P41:
+		variables = &PROP41;
+		break;
+	case P31:
+		variables = &PROP31;
+		break;
+	case P:
+		variables = &free_variable;
+		break;
+	}
+	//pair<long long,int> first为H(x)的值，second为变元x的id
+	priority_queue<pair<long long, int>, vector<pair<long long, int>>, cmp> q;
+	//map<long long, vector<int>, cmp_map> m;
+	int up_cnt = 0;
+	//0.8 0.6 0.2
+	if ((f.NB_UP % 3 == 0 && free_variable.size() >= f.variables_cnt * 0.5)) {
+		shuffleVector(*variables,variables->begin(),variables->end());
+		f.NB_SHUFFLE_FRONT++;
+	}		
+	for (auto it = variables->begin(); it != variables->end();it++) {
+		int& var = *it;
+		if (AdvancedFormula::getVariableAssignByVariableId(var) != -1) continue;
+		long long W_x, W_nx;
+
+		RecordChange* rc = new RecordChange(RecordChange::add_unit_clause_in_H_flag, f.minimum_clause_idx);
+		AdvancedDPLL::addUnitClause(f, var);//f + { x }		
+		Result res_of_f1 = (Result)AdvancedDPLL::up(f, *rc, true);//f + { x }
+
+		W_x = AdvancedDPLL::calculateWx(f,*rc);
+
+		if (res_of_f1 == SAT) {
+			return HCOMPLETE;
+		}
+
+		AdvancedDPLL::deleteUnitClause(f, *rc);//恢复
+
+		delete rc;
+
+		rc = new RecordChange(RecordChange::add_unit_clause_in_H_flag, f.minimum_clause_idx);
+		AdvancedDPLL::addUnitClause(f, -var);//f + { -x }		
+		Result res_of_f2 = (Result)AdvancedDPLL::up(f, *rc, true);//f + { -x }
+
+		W_nx = AdvancedDPLL::calculateWx(f,*rc);
+
+		if (res_of_f2 == SAT) {
+			return HCOMPLETE;
+		}
+
+		if (res_of_f1 == UNSAT && res_of_f2 == UNSAT) {
+			AdvancedDPLL::deleteUnitClause(f, *rc);//恢复
+			delete rc;
+			return NORMAL;
+		}
+
+		if (res_of_f1 == UNSAT && res_of_f2 == NORMAL) {
+			st.push(rc);
+			f.NB_SINGLE++;
+			continue;
+		}
+		if (res_of_f1 == NORMAL && res_of_f2 == UNSAT) {
+			AdvancedDPLL::deleteUnitClause(f, *rc);
+			delete rc;
+			rc = new RecordChange(RecordChange::add_unit_clause_in_H_flag, f.minimum_clause_idx);
+			AdvancedDPLL::addUnitClause(f, var);
+			AdvancedDPLL::up(f, *rc, -1);
+			st.push(rc);
+			f.NB_SINGLE++;
+			continue;
+		}
+
+		AdvancedDPLL::deleteUnitClause(f, *rc);//恢复
+		delete rc;
+
+		up_cnt++;
+		long long H_x = ((W_x * W_nx) << 10) + W_x + W_nx;
+
+		q.push(make_pair(H_x, var));
+		//0.02 500
+		if (free_variable.size()>=f.variables_cnt*0.02 && up_cnt >= 200) {
+			int var_id = AdvancedDPLL::selectVariableInPriorityQueue(q);
+			if (var_id != NORMAL) return var_id;	
+			/*if (f.NB_UP_DETECT % 2 == 0) {
+				shuffleVector(*variables);
+				it = variables->begin();
+				f.NB_SHUFFLE_ING++;
+			}*/				
+
+			shuffleVector(*variables,it+1,variables->end());	
+			f.NB_SHUFFLE_ING++;
+			up_cnt = 100;
+		}
+	}
+	return AdvancedDPLL::selectVariableInPriorityQueue(q);
 }
 
 /**
@@ -814,7 +1003,8 @@ int AdvancedDPLL::solverByIncrementalUpdate(AdvancedFormula& f) {
 		}
 		if (result_up == NORMAL) {
 			bool flag = true;
-			var_id = AdvancedDPLL::H(f, stack_rc);
+			//AdvancedDPLL::H(f, stack_rc);
+			var_id = AdvancedDPLL::improveH(f, stack_rc);
 			w = two;
 			if (var_id == HCOMPLETE) {
 				return COMPLETE;
