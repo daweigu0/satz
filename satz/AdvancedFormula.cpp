@@ -179,3 +179,4 @@ void AdvancedFormula::setVtocSize(int size) {
 vector<int>& AdvancedFormula::getClausesByVariableId(int variable_id) {
 	return this->variableId_to_Clauses[variable_id];
 }
+

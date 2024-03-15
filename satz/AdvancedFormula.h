@@ -30,6 +30,7 @@ public:
 	long long NB_UP_DETECT = 0;
 	long long NB_SHUFFLE_FRONT = 0;
 	long long NB_SHUFFLE_ING = 0;
+	
 	vector<int> unit_clauses;
 	AdvancedFormula() {};
 	AdvancedFormula(const AdvancedFormula& other);
@@ -47,4 +48,19 @@ public:
 	vector<int>& getClausesByVariableId(int variable_id);
 	static int getCluaseLengthByClauseId(AdvancedFormula& f,int clause_id);
 	static int getVariableAssignByVariableId(const int var_id);
+	inline bool checkVariableIsInitialState(int var);
 };
+
+/**
+ * @brief 检查一个变元是否是初始状态
+ * @param var
+ * @return 是初始状态返回true，否则返回false
+*/
+inline bool AdvancedFormula::checkVariableIsInitialState(int var) {
+	var = abs(var);
+	if (var < 1 || var > this->variables_cnt) {
+		cout << "checkVariableIsNoAssign error" << endl;
+		cout << "变元id越界" << endl;
+	}
+	return AdvancedFormula::variables_assign_ptr[var] == -1 && AdvancedFormula::flip_flag_ptr[var] == -1;
+}

@@ -10,6 +10,7 @@ public:
 		moms_flag = 1,
 		add_unit_clause_flag = 2,
 		add_unit_clause_in_H_flag = 3,
+		apply_variable_assign_in_H_flag = 4,
 	};
 	//static const bool up_flag = false;
 	//static const bool moms_flag = true;
