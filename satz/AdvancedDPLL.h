@@ -32,12 +32,14 @@ public:
 	static void recoveryForAdvancedH(AdvancedFormula& f, stack<RecordChange*>& st);
 	static vector<int>* minimumSentenceSet(AdvancedFormula& f);
 	static int H(AdvancedFormula& f, stack<RecordChange*>& st);
-	static int examine1(AdvancedFormula& f, stack<RecordChange*>& st, int test_var, vector<pair<int, long long>>& tested_vars);
-	static int examine(AdvancedFormula& f, stack<RecordChange*>& st, int test_var, vector<pair<int,long long>>& tested_vars);
+	static long long get_resolvant_nb(AdvancedFormula& f,RecordChange& rc, vector<pair<pair<int, int>, pair<int, int>>>& count);
+	static int examine1(AdvancedFormula& f, stack<RecordChange*>& st, int test_var, vector<pair<int, long long>>& tested_vars, vector<pair<pair<int, int>, pair<int, int>>>& count);
+	static int examine(AdvancedFormula& f, stack<RecordChange*>& st, int test_var, vector<pair<int, long long>>& tested_vars);
 	static bool getRandomBoolean();
-	static pair<int, pair<int, int>> countForProp(AdvancedFormula& f,int var);
+	static void countForProp(AdvancedFormula& f, int var, pair<pair<int, int>, pair<int, int>>& p);
+	static int getSelectVariable(AdvancedFormula& f, vector<pair<int, long long>>& tested_vars);
 	static int improveH(AdvancedFormula& f, stack<RecordChange*>& st);
-	static long long calculateWx(AdvancedFormula& f,const RecordChange& rc);
+	static long long calculateWx(AdvancedFormula& f, const RecordChange& rc);
 	static void addUnitClause(AdvancedFormula& f, int var_id);
 	static void deleteUnitClause(AdvancedFormula& f, RecordChange& rc);
 	static void upBackTrackingHelpFun(AdvancedFormula& f, RecordChange& rc);

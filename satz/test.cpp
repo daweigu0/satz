@@ -9,9 +9,9 @@ using namespace std;
 //extern Vtoc variableId_to_Clauses;
 
 void testAdvancedDPLL1() {
-	//C:/Users/l1768/Desktop/sat/DPLLÅàÑµ/DPLLÅàÑµ/SAT²âÊÔ±¸Ñ¡ËãÀı/²»Âú×ãËãÀı/u-problem10-100.cnf
-	//C:/Users/l1768/Desktop/sat/DPLLÅàÑµ/DPLLÅàÑµ/SAT²âÊÔ±¸Ñ¡ËãÀı/Beijing/4blocks.cnf ewddr2-10-by-5-8.cnf
-	string filename = "C:/Users/l1768/Desktop/sat/DPLLÅàÑµ/DPLLÅàÑµ/SAT²âÊÔ±¸Ñ¡ËãÀı/Beijing/4blocks.cnf";
+	//"D:/SAT/DPLLÅàÑµ/DPLLÅàÑµ/SAT²âÊÔ±¸Ñ¡ËãÀı/²»Âú×ãËãÀı/u-problem10-100.cnf"
+	//D:/SAT/DPLLÅàÑµ/DPLLÅàÑµ/SAT²âÊÔ±¸Ñ¡ËãÀı/Beijing/4blocks.cnf ewddr2-10-by-5-8.cnf
+	string filename = "D:/SAT/DPLLÅàÑµ/DPLLÅàÑµ/SAT²âÊÔ±¸Ñ¡ËãÀı/Beijing/e0ddr2-10-by-5-1.cnf";
 	Json::Value root;
 	//.substr(filename.rfind('/')+1)
 	root["instance"] = filename;
@@ -82,7 +82,7 @@ void testAdvancedDPLLByConsole(string filename) {
 }
 
 int main(int argc,char* argv[]) {
-	//testAdvancedDPLL1();
-	testAdvancedDPLLByConsole(argv[1]);
+	testAdvancedDPLL1();
+	//testAdvancedDPLLByConsole(argv[1]);
 	return 0;
 }
