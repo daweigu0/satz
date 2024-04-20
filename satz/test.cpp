@@ -38,8 +38,6 @@ void testAdvancedDPLL1() {
 	root["others"]["NB_BRANCHE"] = f_ptr->NB_BRANCHE;
 	root["others"]["NB_UP"] = f_ptr->NB_UP;
 	root["others"]["NB_UP_DETECT"] = f_ptr->NB_UP_DETECT;
-	root["others"]["UP_DETECT_PERCENT"] = f_ptr->NB_UP_DETECT * 1.0 / (f_ptr->NB_UP + f_ptr->NB_UP_DETECT) * 1.0;
-	root["others"]["NB_SHUFFLE_FRONT"] = f_ptr->NB_SHUFFLE_FRONT;
 	root["others"]["NB_SHUFFLE_ING"] = f_ptr->NB_SHUFFLE_ING;
 	root["verify_result"] = AdvancedDPLL::verifyResult(verify_f);
 	cout << root.toStyledString() << endl;
@@ -73,8 +71,6 @@ void testAdvancedDPLLByConsole(string filename) {
 	root["others"]["NB_BRANCHE"] = f_ptr->NB_BRANCHE;
 	root["others"]["NB_UP"] = f_ptr->NB_UP;
 	root["others"]["NB_UP_DETECT"] = f_ptr->NB_UP_DETECT;
-	root["others"]["UP_DETECT_PERCENT"] = f_ptr->NB_UP_DETECT * 1.0 / (f_ptr->NB_UP + f_ptr->NB_UP_DETECT) * 1.0;
-	root["others"]["NB_SHUFFLE_FRONT"] = f_ptr->NB_SHUFFLE_FRONT;
 	root["others"]["NB_SHUFFLE_ING"] = f_ptr->NB_SHUFFLE_ING;
 	root["verify_result"] = AdvancedDPLL::verifyResult(verify_f);
 	cout << "over" << endl;

@@ -848,12 +848,12 @@ int AdvancedDPLL::getSelectVariable(AdvancedFormula& f, vector<pair<int, long lo
  * @return 返回H(x)值最大的变元id
 */
 int AdvancedDPLL::improveH(AdvancedFormula& f, stack<RecordChange*>& st) {
-	const int T = 50;
+	const int T = 300;
 	vector<pair<int, long long>> tested_vars;
 	//vector<pair<pair<int, int>, pair<int, int>>> count(f.variables_cnt + 1);
 	vector<int> PROP41;
 	vector<int> PROP31;
-	vector<int> PROP;
+	vector<int> PROP0;
 	pair<pair<int, int>, pair<int, int>> p;
 	int result_prop;
 	int p_cnt, n_cnt, t_p_cnt, t_n_cnt;
@@ -874,19 +874,40 @@ int AdvancedDPLL::improveH(AdvancedFormula& f, stack<RecordChange*>& st) {
 					PROP31.push_back(i);
 				}
 				else {
-					PROP.push_back(i);
+					PROP0.push_back(i);
 				}
 			}
 		}
 	}
-
-	for (const int& var : PROP41) {
+	tested_vars.reserve(PROP41.size() + PROP31.size() + PROP0.size());
+	vector<vector<int>*> need_prop{ &PROP41,&PROP31,&PROP0 };
+	int cnt = 0;
+	for (vector<int>*& prop : need_prop) {
+		for (const int& var : *prop) {
+			if (f.checkVariableIsInitialState(var)) {
+				result_prop = examine(f, st, var, tested_vars);
+				if (result_prop == NORMAL) return NORMAL;
+				if (result_prop == HCOMPLETE) return HCOMPLETE;
+				cnt++;
+			}
+			if (cnt == T) {
+				int select_var = AdvancedDPLL::getSelectVariable(f, tested_vars);
+				if (select_var != NORMAL) return select_var;
+				else {
+					tested_vars.clear();
+					cnt = 200;
+				}
+			}
+		}
+	}
+	/*for (const int& var : PROP41) {
 		if (f.checkVariableIsInitialState(var)) {
 			result_prop = examine(f, st, var, tested_vars);
 			if (result_prop == NORMAL) return NORMAL;
 			if (result_prop == HCOMPLETE) return HCOMPLETE;
 		}
 	}
+
 	if (tested_vars.size() < T) {
 		for (const int& var : PROP31) {
 			if (f.checkVariableIsInitialState(var)) {
@@ -910,7 +931,8 @@ int AdvancedDPLL::improveH(AdvancedFormula& f, stack<RecordChange*>& st) {
 				else tested_vars.clear();
 			}
 		}
-	}
+	}*/
+
 	//if (tested_vars.size() == 0) return NORMAL;
 	//int select_var = NORMAL;
 	//long long max_H = LLONG_MIN;
